@@ -5,14 +5,15 @@
 
 class RainbowCycle {
   private: 
-    int led = 0, direction = 0;
-    unsigned long color = 0; // Changed 'color' to 'unsigned long' for better handling of color values
+    unsigned long color = 0;
   
   public:
     int count = 0;
+    int led = 0, direction = 0;
     RainbowCycle() {}
 
-    void Update(Adafruit_NeoPixel& rgb, int bright = 255) {
+    //skipLast is so that I can only update half of the strip and do something else with the other leds
+    void Update(Adafruit_NeoPixel& rgb, int bright = 255, int skipLast = 0) {
       rgb.setPixelColor(led, rgb.ColorHSV(color, 255, bright));
       rgb.show();
 
@@ -26,10 +27,33 @@ class RainbowCycle {
       if(color > 65025)
         color = 0;
 
-      if(led > rgb.numPixels())
+      if(led > rgb.numPixels() - skipLast)
         direction = 1;
       else if(led == 0)
         direction = 0; 
+    }
+    void Update3(Adafruit_NeoPixel& rgb, int bright = 255, int numLeds = 1) {
+
+      int endLed = (direction == 0) ? led + numLeds - 1 : led - numLeds + 1;
+      
+      for(int i = led; (direction == 0) ? i <= endLed : i >= endLed; (direction == 0) ? i++ : i--) {
+        rgb.setPixelColor(i, rgb.ColorHSV(color, 255, bright));
+      }
+      rgb.show();
+
+      if(direction == 0)
+        led += numLeds;
+      else 
+        led -= numLeds;
+
+      color += (65025 / (rgb.numPixels() * 2));
+      if(color > 65025)
+        color = 0;
+
+      if(led >= rgb.numPixels())
+        led = 0;
+      else if(led < 0)
+        led = rgb.numPixels() - 1; 
     }
 
     void Update2(Adafruit_NeoPixel& rgb, int bright = 255) {
@@ -37,14 +61,19 @@ class RainbowCycle {
       rgb.show();
 
       count = 0;     
-      led++;
+      if(direction == 0)
+        led++;
+      else 
+        led--;
       
-      color += (65025 / rgb.numPixels() / 2);
+      color += (65025 / (rgb.numPixels() * 2));
       if(color > 65025)
         color = 0;
 
       if(led > rgb.numPixels())
         led = 0;
+      else if(led <= 0)
+        led = rgb.numPixels(); 
     }
 };
 
