@@ -1,4 +1,4 @@
-int numberOfLEDS = 5;  //The number of led items in the leds[] array
+int numberOfLEDS = 6;  //The number of led items in the leds[] array
 
 void setRangeColor(Adafruit_NeoPixel led, int start, int length, int red, int green, int blue) {
   for (int i = start; i < start + length; i++) {
@@ -134,7 +134,7 @@ void MusicReactive1(Adafruit_NeoPixel leds[]) {
     int right_color = colorshift;
     int left_color = colorshift;
 
-    if (i == 2)  //only for music reactive bars:
+    /*if (i == 2)  //only for music reactive bars:
     {
       //left channel
       for (int j = numberOfPixels / 2; j < left_map; j++)  //set color
@@ -160,7 +160,8 @@ void MusicReactive1(Adafruit_NeoPixel leds[]) {
       for (int j = right_map; j < numberOfPixels / 2; j++)  //make them off
         leds[i].setPixelColor(j, 0, 0, 0);
     } 
-    else if (i == 1)
+    else */
+    if (i == 1)
     {
       right_color = left_color = colorshift;
 
